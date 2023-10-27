@@ -1,16 +1,16 @@
-# flutter_blog_2
+# flutter blog riverpod version2
 
-A new Flutter project.
+- https://github.com/codingspecialist/flutter-riverpod-testcode
 
-## Getting Started
+- firestore 채팅
+- imagePicker 사진 선택
+- base64 사진 전송
+- response_dto -> api_util로 변경
+- api_util success, error 추가
+- login은 레코드로 응답 2개 받기
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 아래 부분은 생각해보기
+- 뒤로가기할때는 viewmodel(x), 통신(x)
+- 글쓰기 완료하고, 글목록 페이지 갈때 .
+- 업데이트 완료하고, 글상세 페이지 갈때 viewmodel 갱신 (통신x)
+- 글삭제 완료하고, 글목록 페이지 갈때 viewmodel 갱신 (통신x)
