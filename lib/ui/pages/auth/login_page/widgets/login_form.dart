@@ -31,8 +31,7 @@ class LoginFormState extends State<LoginForm> {
       print(username.text);
       print(password.text);
       print(gender.value);
-      LoginReqDTO reqDTO =
-          LoginReqDTO(username: username.text, password: password.text);
+      LoginReqDTO reqDTO = LoginReqDTO(username: username.text, password: password.text);
       ref.read(sessionProvider).login(reqDTO);
     }
   }
@@ -56,8 +55,7 @@ class LoginFormState extends State<LoginForm> {
             funValidator: validatePassword(),
             controller: password,
           ),
-          const SizedBox(height: largeGap),
-          CustomCheckbox(gender),
+          const SizedBox(height: largeGap)
         ],
       ),
     );
