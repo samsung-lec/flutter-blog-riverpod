@@ -41,12 +41,9 @@ class PostUpdateForm extends ConsumerWidget {
             text: "글 수정하기",
             funPageRoute: () async {
               if (_formKey.currentState!.validate()) {
-                PostUpdateReqDTO reqDTO = PostUpdateReqDTO(
-                    title: _title.text, content: _content.text);
+                PostUpdateReqDTO reqDTO = PostUpdateReqDTO(title: _title.text, content: _content.text);
 
-                await ref
-                    .read(postDetailProvider(post.id).notifier)
-                    .notifyUpdate(post.id, reqDTO);
+                await ref.read(postDetailProvider(post.id).notifier).notifyUpdate(post.id, reqDTO);
               }
             },
           ),

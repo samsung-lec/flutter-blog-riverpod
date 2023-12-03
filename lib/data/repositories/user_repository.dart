@@ -3,6 +3,7 @@ import 'package:flutter_blog/_core/constants/http.dart';
 import 'package:flutter_blog/data/dtos/response_dto.dart';
 import 'package:flutter_blog/data/dtos/user_request.dart';
 import 'package:flutter_blog/data/models/user.dart';
+import 'package:logger/logger.dart';
 
 class UserRepository {
   static final UserRepository _instance = UserRepository._single();
@@ -13,34 +14,34 @@ class UserRepository {
 
   UserRepository._single();
 
-  Future<ResponseDTO> fetchLogin(LoginReqDTO requestDTO) async {
-    try{
-      // 1. 통신 시작
-      Response response = await dio.post("/login", data: requestDTO.toJson());
+  Future<(ResponseDTO, String, String)> fetchLogin(LoginReqDTO requestDTO) async {
+    Response response = await dio.post("/login", data: requestDTO.toJson());
+    Logger().d(response.data);
 
-      // 2. DTO 파싱
-      ResponseDTO responseDTO = ResponseDTO.fromJson(response.data);
-      responseDTO.data = User.fromJson(responseDTO.data);
+    ResponseDTO responseDTO = ResponseDTO.fromJson(response.data);
 
-      // 3. 토큰 받기
-      final authorization = response.headers["authorization"];
-      if(authorization != null){
-        responseDTO.token = authorization.first;
-      }
-      return responseDTO;
-    }catch(e){
-      return ResponseDTO(code: -1, msg: "유저네임 혹은 비번이 틀렸습니다");
+    if (responseDTO.success) {
+      responseDTO.response = User.fromJson(responseDTO.response);
+      final accessToken = response.headers["Authorization"]!.first;
+      final refreshToken = response.headers["X-Refresh-Token"]!.first;
+
+      Logger().d("로그인 후 accessToken : ${accessToken}");
+      Logger().d("로그인 후 refreshToken : ${refreshToken}");
+
+      return (responseDTO, accessToken, refreshToken);
+    } else {
+      return (responseDTO, "", "");
     }
   }
 
   Future<ResponseDTO> fetchJoin(JoinReqDTO requestDTO) async {
-    try{
-      Response response = await dio.post("/join", data: requestDTO.toJson());
-      ResponseDTO responseDTO = ResponseDTO.fromJson(response.data);
-      responseDTO.data = User.fromJson(responseDTO.data);
-      return responseDTO;
-    }catch(e){
-      return ResponseDTO(code: -1, msg: "중복되는 유저명입니다.");
+    Response response = await dio.post("/join", data: requestDTO.toJson());
+    Logger().d(response.data);
+    ResponseDTO responseDTO = ResponseDTO.fromJson(response.data);
+
+    if (responseDTO.success) {
+      responseDTO.response = User.fromJson(responseDTO.response);
     }
+    return responseDTO;
   }
 }

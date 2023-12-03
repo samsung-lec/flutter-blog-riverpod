@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blog/_core/constants/size.dart';
 import 'package:flutter_blog/data/models/post.dart';
+import 'package:intl/intl.dart';
 
 class PostDetailProfile extends StatelessWidget {
   final Post post;
@@ -22,9 +23,8 @@ class PostDetailProfile extends StatelessWidget {
             const Text("·"),
             const SizedBox(width: mediumGap),
             const Text("Written on "),
-            Text(post.getUpdated()),
+            Text(DateFormat.MMMd().format(post.updatedAt!)),
           ],
-        )
-    );
+        ));
   }
 }

@@ -37,8 +37,7 @@ class PostWriteForm extends ConsumerWidget {
             text: "글쓰기",
             funPageRoute: () async {
               if (_formKey.currentState!.validate()) {
-                PostSaveReqDTO reqDTO =
-                    PostSaveReqDTO(title: _title.text, content: _content.text);
+                PostSaveReqDTO reqDTO = PostSaveReqDTO(title: _title.text, content: _content.text);
                 await ref.read(postListProvider.notifier).notifyAdd(reqDTO);
               }
             },

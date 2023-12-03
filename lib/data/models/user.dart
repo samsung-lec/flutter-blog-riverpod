@@ -4,31 +4,25 @@ class User {
   final int id;
   final String username;
   final String email;
-  final DateTime created;
-  final DateTime updated;
+  final String imgUrl;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   User({
     required this.id,
     required this.username,
     required this.email,
-    required this.created,
-    required this.updated,
+    required this.imgUrl,
+    required this.createdAt,
+    required this.updatedAt,
   });
-
-  // 통신을 위해서 Dart 오브젝트 => json 처럼 생긴 Map으로 변환하는 함수
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "username": username,
-    "email": email,
-    "created": created,
-    "updated": updated
-  };
 
   // 응답 받은 데이터를 json 처럼 생긴 Map => Dart 오브젝트로 변환하는 함수
   User.fromJson(Map<String, dynamic> json)
       : id = json["id"],
-        username = json["username"],
-        email = json["email"],
-        created = DateFormat("yyyy-mm-dd").parse(json["created"]),
-        updated = DateFormat("yyyy-mm-dd").parse(json["updated"]);
+        username = json["username"] ?? "",
+        email = json["email"] ?? "",
+        imgUrl = json["imgUrl"] ?? "",
+        createdAt = json["created"] != null ? DateFormat("yyyy-mm-dd").parse(json["createdAt"]) : null,
+        updatedAt = json["created"] != null ? DateFormat("yyyy-mm-dd").parse(json["updatedAt"]) : null;
 }

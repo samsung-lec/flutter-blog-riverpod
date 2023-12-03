@@ -10,8 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 // 창고 관리자
-final postDetailProvider = StateNotifierProvider.family
-    .autoDispose<PostDetailViewModel, PostDetailModel?, int>((ref, postId) {
+final postDetailProvider = StateNotifierProvider.family.autoDispose<PostDetailViewModel, PostDetailModel?, int>((ref, postId) {
   Logger().d("post 창고 만들어짐 $postId");
   return PostDetailViewModel(ref, null)..notifyInit(postId);
 });
@@ -33,26 +32,23 @@ class PostDetailViewModel extends StateNotifier<PostDetailModel?> {
     Logger().d("notifyInit");
 
     SessionUser sessionUser = ref.read(sessionProvider);
-    ResponseDTO responseDTO =
-        await PostRepository().fetchPost(sessionUser.jwt!, id);
+    ResponseDTO responseDTO = await PostRepository().fetchPost(sessionUser.accessToken!, id);
 
-    state = PostDetailModel(post: responseDTO.data);
+    state = PostDetailModel(post: responseDTO.response);
   }
 
   Future<void> notifyUpdate(int postId, PostUpdateReqDTO reqDTO) async {
     Logger().d("notifyUpdate");
 
     SessionUser sessionUser = ref.read(sessionProvider);
-    ResponseDTO responseDTO =
-        await PostRepository().updatePost(sessionUser.jwt!, postId, reqDTO);
-    if (responseDTO.code != 1) {
-      ScaffoldMessenger.of(mContext!).showSnackBar(
-          SnackBar(content: Text("게시물 수정 실패 : ${responseDTO.msg}")));
-    } else {
-      await ref.read(postListProvider.notifier).notifyUpdate(responseDTO.data);
+    ResponseDTO responseDTO = await PostRepository().updatePost(sessionUser.accessToken!, postId, reqDTO);
+    if (responseDTO.success) {
+      await ref.read(postListProvider.notifier).notifyUpdate(responseDTO.response);
 
-      state = PostDetailModel(post: responseDTO.data);
+      state = PostDetailModel(post: responseDTO.response);
       Navigator.pop(mContext!);
+    } else {
+      ScaffoldMessenger.of(mContext!).showSnackBar(SnackBar(content: Text("게시물 수정 실패 : ${responseDTO.errorMessage}")));
     }
   }
 }

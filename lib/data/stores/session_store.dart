@@ -17,10 +17,14 @@ final sessionProvider = Provider<SessionStore>((ref) {
 // 2. 창고 데이터
 class SessionUser {
   User? user;
-  String? jwt;
-  bool? isLogin;
+  String accessToken;
+  String refreshToken;
+  bool isLogin;
 
-  SessionUser();
+  SessionUser()
+      : accessToken = "",
+        refreshToken = "",
+        isLogin = false;
 }
 
 // 3. 창고
@@ -32,24 +36,25 @@ class SessionStore extends SessionUser {
     Logger().d("login");
 
     // 1. Repository 메소드를 호출하여 응답 결과 및 데이터 받음.
-    ResponseDTO responseDTO = await UserRepository().fetchLogin(loginReqDTO);
+    var (responseDTO, accessToken, refreshToken) = await UserRepository().fetchLogin(loginReqDTO);
 
-    // 응답 결과 값이 1일 경우
-    if (responseDTO.code == 1) {
+    if (responseDTO.success) {
       // 2. 토큰을 휴대폰에 저장
-      await secureStorage.write(key: "jwt", value: responseDTO.token);
+      await secureStorage.write(key: "accessToken", value: accessToken);
+      await secureStorage.write(key: "refreshToken", value: refreshToken);
 
       // 3. 로그인 상태 등록
-      this.user = responseDTO.data;
-      this.jwt = responseDTO.token!;
-      this.isLogin = true;
+      Logger().d("세션에 들어갔는지 확인 : ${accessToken}");
+      Logger().d("세션에 들어갔는지 확인 : ${refreshToken}");
+      user = responseDTO.response;
+      this.accessToken = accessToken;
+      this.refreshToken = refreshToken;
 
       // 4. 페이지 이동
       Navigator.popAndPushNamed(mContext!, Move.postListPage);
     } else {
       // 실패 시 스낵바
-      ScaffoldMessenger.of(mContext!)
-          .showSnackBar(SnackBar(content: Text("로그인 실패 : ${responseDTO.msg}")));
+      ScaffoldMessenger.of(mContext!).showSnackBar(SnackBar(content: Text("로그인 실패 : ${responseDTO.errorMessage}")));
     }
   }
 
@@ -60,23 +65,23 @@ class SessionStore extends SessionUser {
     // 1. Repository 메소드를 호출하여 응답 결과 및 데이터 받음.
     ResponseDTO responseDTO = await UserRepository().fetchJoin(reqDTO);
 
-    // 응답 결과 값이 1일 경우
-    if (responseDTO.code == 1) {
+    if (responseDTO.success) {
       // 2. 페이지 이동
       Navigator.pushNamed(mContext!, Move.loginPage);
     } else {
       // 실패 시 스낵바
-      ScaffoldMessenger.of(mContext!)
-          .showSnackBar(SnackBar(content: Text("회원가입 실패")));
+      ScaffoldMessenger.of(mContext!).showSnackBar(SnackBar(content: Text("회원가입 실패")));
     }
   }
 
   // 로그아웃
   Future<void> logout() async {
-    this.user = null;
-    this.jwt = null;
-    this.isLogin = false;
-    await secureStorage.delete(key: "jwt");
+    user = null;
+    accessToken = "";
+    refreshToken = "";
+    isLogin = false;
+    await secureStorage.delete(key: "accessToken");
+    await secureStorage.delete(key: "refreshToken");
     Logger().d("세션 종료 및 디바이스 JWT 삭제");
   }
 }

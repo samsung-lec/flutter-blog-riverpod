@@ -32,8 +32,7 @@ class PostDetailBody extends ConsumerWidget {
             PostDetailTitle(post.title),
             const SizedBox(height: largeGap),
             PostDetailProfile(post),
-            if (sessionUser.user!.id == post.user.id)
-              PostDetailButtons(post), // 현재 오류 상태
+            if (sessionUser.user!.id == post.user.id) PostDetailButtons(post), // 현재 오류 상태
             const Divider(),
             const SizedBox(height: largeGap),
             Expanded(child: PostDetailContent(post.content)),

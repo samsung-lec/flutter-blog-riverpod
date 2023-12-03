@@ -47,10 +47,7 @@ class JoinForm extends ConsumerWidget {
             text: "회원가입",
             funPageRoute: () {
               if (_formKey.currentState!.validate()) {
-                JoinReqDTO reqDTO = JoinReqDTO(
-                    username: _username.text,
-                    password: _password.text,
-                    email: _email.text);
+                JoinReqDTO reqDTO = JoinReqDTO(username: _username.text, password: _password.text, email: _email.text);
                 ref.read(sessionProvider).join(reqDTO);
                 Logger().d("회원가입 성공");
               }
