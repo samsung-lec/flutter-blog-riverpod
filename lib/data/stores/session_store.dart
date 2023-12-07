@@ -31,6 +31,25 @@ class SessionUser {
 class SessionStore extends SessionUser {
   final mContext = navigatorKey.currentContext;
 
+  Future<void> autoLogin() async {
+    String? accessToken = await secureStorage.read(key: "accessToken");
+
+    if(accessToken == null){
+      Navigator.of(mContext!).pushNamed(Move.loginPage);
+    }else{
+      ResponseDTO responseDTO = await UserRepository().fetchAutoLogin(accessToken);
+      if(responseDTO.success){
+        user = responseDTO.response;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        Navigator.popAndPushNamed(mContext!, Move.postListPage);
+      }else{
+        Navigator.of(mContext!).pushNamed(Move.loginPage);
+      }
+    }
+
+  }
+
   // 로그인
   Future<void> login(LoginReqDTO loginReqDTO) async {
     Logger().d("login");
